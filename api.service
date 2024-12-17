@@ -1,0 +1,13 @@
+[Unit]
+Description=Sei-associated wallet query API
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/node /root/repos/seiwalletapi/api.js
+Restart=on-failure
+User=root
+Environment=PORT=3009
+
+[Install]
+WantedBy=multi-user.target

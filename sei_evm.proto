@@ -1,0 +1,25 @@
+syntax = "proto3";
+package seiprotocol.seichain.evm;
+
+service Query {
+    rpc SeiAddressByEVMAddress (QuerySeiAddressByEVMAddressRequest) returns (QuerySeiAddressByEVMAddressResponse);
+    rpc EVMAddressBySeiAddress (QueryEVMAddressBySeiAddressRequest) returns (QueryEVMAddressBySeiAddressResponse);
+}
+
+message QuerySeiAddressByEVMAddressRequest {
+    string evm_address = 1;
+}
+
+message QuerySeiAddressByEVMAddressResponse {
+    string sei_address = 1;
+    bool associated = 2;
+}
+
+message QueryEVMAddressBySeiAddressRequest {
+    string sei_address = 1;
+}
+
+message QueryEVMAddressBySeiAddressResponse {
+    string evm_address = 1;
+    bool associated = 2;
+}
