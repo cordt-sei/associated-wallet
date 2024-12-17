@@ -4,7 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/node /root/repos/seiwalletapi/api.js
+# must specify working dir for functionality
+WorkingDirectory=/root/repos/q_wallet_grpc
+ExecStart=/usr/bin/node /root/repos/q_wallet_grpc/index.js
 Restart=on-failure
 User=root
 Environment=PORT=3009
