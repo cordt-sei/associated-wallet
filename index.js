@@ -87,7 +87,7 @@ if (cluster.isPrimary) {
     }
   }
 
-  // Existing POST endpoint for multiple addresses
+  // post endpoint - multiple addr using appjson
   app.post('/query-address', async (req, res) => {
     const { addresses } = req.body;
 
@@ -105,7 +105,7 @@ if (cluster.isPrimary) {
     res.json(results);
   });
 
-  // New GET endpoint for single address lookup
+  // get endpoint - single addr using URL path param
   app.get('/:address', async (req, res) => {
     const { address } = req.params;
 
@@ -114,13 +114,21 @@ if (cluster.isPrimary) {
     }
 
     console.log(`Fetching address: ${address}`);
-    const result = await fetchAddress(address);
+    try {
+      const result = await fetchAddress(address);
 
-    if (result) {
-      return res.json({ original: address, result });
+      if (result) {
+        return res.json({ original: address, result });
+      }
+
+      return res.status(404).json({ error: 'Address not found or invalid format.' });
+    } catch (error) {
+      console.error(`Error in GET /:address: ${error.stack}`);
+      return res.status(500).json({
+        error: 'Internal server error.',
+        details: error.message,
+      });
     }
-
-    return res.status(404).json({ error: 'Address not found or invalid format.' });
   });
 
   app.listen(port, () => {
