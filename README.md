@@ -44,6 +44,19 @@ node index.js
 
 ### API Endpoints
 
+#### **GET**
+
+**Description**: Converts a single address of either format, can be used as simply as just entering the URL in your browser.
+
+`curl -s https://wallets.sei.basementnodes.ca/sei1addresss..`
+
+```json
+{
+    "original": "sei1addresss..",
+    "result": "0xaddress.."
+}
+```
+
 #### **POST** `/query-address`
 
 **Description**: Converts provided Sei or EVM addresses to their associated format.
