@@ -1,97 +1,77 @@
 # Improved Associated Wallet Query API
 
-A simple API for querying the associated Sei and EVM wallet addresses using gRPC and Express.
+A straightforward API to query associated Sei (Bech32) and EVM (Hex) wallet addresses using gRPC and Express.
 
 ## Features
-- Convert Sei (Bech32) addresses to EVM (Hex) addresses.
-- Convert EVM (Hex) addresses to Sei (Bech32) addresses.
-- Supports querying multiple addresses in a single request.
-- Validates input formats before querying.
-- Clustered Node.js process for improved performance.
+- Convert Sei addresses to EVM addresses and vice versa.
+- Batch queries for multiple addresses.
+- Validates address formats before processing.
+- Node.js clustering for improved performance.
 - Health check endpoint for monitoring.
 
 ## Requirements
 - Node.js v18+
-- Yarn or npm for dependency management
-- `@grpc/grpc-js` and `@grpc/proto-loader` libraries
-- `express` for API handling
-- `dotenv` for environment variable management
-- `bech32` for address format validation
+- Yarn (recommended) or npm
+- Dependencies: `@grpc/grpc-js`, `@grpc/proto-loader`, `express`, `dotenv`, `bech32`
 
 ## Installation
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/cordt-sei/associated-wallet.git
-   cd associated-wallet
-   ```
+```bash
+git clone https://github.com/cordt-sei/associated-wallet.git
+cd associated-wallet
+```
 
 2. Install dependencies:
 
-   ```bash
-   yarn install
-   ```
+```bash
+yarn install
+```
 
-3. Add a `.env` file for environment variables:
+3. Configure environment variables in `.env`:
 
-   ```plaintext
-   PORT=3000
-   grpcAddress=grpc.sei-apis.com:443
-   ```
+```env
+PORT=3000
+grpcAddress=grpc.sei-apis.com:443
+```
 
-4. Ensure the `sei_evm.proto` file is present in the root directory.
+4. Ensure `sei_evm.proto` is in the root directory.
 
-## Usage
-
-### Start the API Server
-Run the server locally:
+## Running the API Server
 
 ```bash
 node index.js
 ```
 
-### API Endpoints
+The server will start on port `3000` by default (configurable in `.env`).
 
-<<<<<<< HEAD
-#### **GET**
+## API Endpoints
 
-**Description**: Converts a single address of either format, can be used as simply as just entering the URL in your browser.
+### GET `/address`
 
-`curl -s https://wallets.sei.basementnodes.ca/sei1addresss..`
+Converts a single Sei or EVM address. Accessible directly via browser or `curl`.
 
-```json
-{
-    "original": "sei1addresss..",
-    "result": "0xaddress.."
-}
-```
-
-#### **POST** `/query-address`
-=======
-#### **GET /:address**
->>>>>>> b54770dc6370cddea310e1d3c4b2105964d93137
-
-**Description**: Converts a single address of either format (Sei or EVM). You can enter the URL directly in a browser or use `curl`.
-
-Example request:
+Example:
 
 ```bash
 curl -s https://wallets.sei.basementnodes.ca/sei1address...
 ```
 
-Example response:
+Response:
 
 ```json
 {
-    "original": "sei1address...",
-    "result": "0xaddress..."
+  "original": "sei1address...",
+  "result": "0xaddress..."
 }
 ```
 
-#### **POST /query-address**
+- Returns `null` for invalid or unassociated addresses.
 
-**Description**: Converts multiple Sei or EVM addresses to their associated format.
+### POST `/query-address`
+
+Convert multiple Sei/EVM addresses simultaneously.
 
 **Request Body**:
 
@@ -101,7 +81,7 @@ Example response:
 }
 ```
 
-**Response**:
+Response:
 
 ```json
 [
@@ -110,22 +90,24 @@ Example response:
 ]
 ```
 
-- Accepts either a single address as a string or multiple addresses in an array.
-- Invalid or unassociated addresses return `null`.
+- Single or multiple addresses are accepted.
+- Invalid addresses yield `null`.
 
-### Health Check
-To verify that the server is running, send a `GET` request to `/`:
+## Health Check
+
+Check server status:
 
 ```bash
 curl http://localhost:3000
 ```
 
-## Systemd Service (Optional)
-To deploy the API as a system service, create a `systemd` unit file like:
+## Deploy as Systemd Service (Optional)
+
+Create a systemd unit file `associatedwalletgrpc.service`:
 
 ```ini
 [Unit]
-Description=Sei Associated Wallets API
+Description=Sei Associated Wallet API
 After=network.target
 
 [Service]
@@ -140,23 +122,25 @@ Environment=PORT=3000
 WantedBy=multi-user.target
 ```
 
-Reload and start the service:
+Activate the service:
+
 ```bash
 systemctl daemon-reload
 systemctl enable associatedwalletgrpc.service
 systemctl start associatedwalletgrpc.service
 ```
 
-## Configuring Caddy as a Reverse Proxy
-To serve the API behind a Caddy web server, use the following configuration as a boilerplate:
+## Caddy Reverse Proxy Configuration
+
+Serve behind Caddy with the following configuration:
 
 ```caddyfile
-<your_domain> {
+your.domain.ca {
     log {
-        output file /var/log/sei_wallet_api.log
+        output file /var/log/sub_seiapi.log
         format json
     }
-	# set port in systemd service file
+
     reverse_proxy http://0.0.0.0:3000 {
         header_up Strict-Transport-Security "max-age=31536000"
         header_up X-Content-Type-Options "nosniff"
@@ -169,16 +153,11 @@ To serve the API behind a Caddy web server, use the following configuration as a
 }
 ```
 
-## Dependencies
-- **@grpc/grpc-js**: gRPC implementation for Node.js
-- **@grpc/proto-loader**: Parses `.proto` files
-- **express**: HTTP server for API endpoints
-- **dotenv**: Environment variable management
-- **bech32**: Address format validation
-
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss your ideas.
+
+Pull requests welcome. For significant changes, please open an issue first.
 
 ## License
-This project is licensed under the MIT License.
+
+MIT License.
 
