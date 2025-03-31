@@ -1,4 +1,4 @@
-# Improved Associated Wallet Query API
+# SEI Wallet Query API
 
 A straightforward API to query associated Sei (Bech32) and EVM (Hex) wallet addresses using gRPC and Express.
 
